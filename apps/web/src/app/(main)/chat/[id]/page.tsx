@@ -134,11 +134,11 @@ export default function Chat() {
     return () => unsubscribeMessages(handleNewMessage);
   }, [storeUser]);
 
-  // useEffect(() => {
-  //   if (isFirstLoad) return;
-  //   const chat = chatContainerRef.current;
-  //   if (chat) chat.scrollTop = chat.scrollHeight - chat.clientHeight;
-  // }, [isFirstLoad]);
+  useEffect(() => {
+    if (isFirstLoad) return;
+    const chat = chatContainerRef.current;
+    if (chat) chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+  }, [isFirstLoad]);
 
   useEffect(() => {
     const chat = chatContainerRef.current;
@@ -168,7 +168,6 @@ export default function Chat() {
       </nav>
       <main
         ref={chatContainerRef}
-        style={{ overflowAnchor: "auto" }}
         className="flex-1 w-full h-full flex flex-col overflow-auto"
         onScroll={(e) => {
           const chat = e.target as HTMLElement;
