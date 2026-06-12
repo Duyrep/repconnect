@@ -1,0 +1,19 @@
+import { apiClient } from "@/lib";
+
+export default async function sendMessage(payload: {
+  conversationId: string;
+  content: string;
+}) {
+  const response = await apiClient(
+    `${process.env.NEXT_PUBLIC_API_URL}/messages`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  return { status: response.status };
+}

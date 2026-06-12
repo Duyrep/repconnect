@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary-a0: var(--primary-a0);
+  --color-primary-a10: var(--primary-a10);
+  --color-primary-a20: var(--primary-a20);
+  --color-primary-a30: var(--primary-a30);
+  --color-primary-a40: var(--primary-a40);
+  --color-primary-a50: var(--primary-a50);
+  --color-primary-a60: var(--primary-a60);
+  --color-primary-a70: var(--primary-a70);
+  --color-primary-a80: var(--primary-a80);
+  --color-primary-a90: var(--primary-a90);
+  --color-surface-a0: var(--surface-a0);
+  --color-surface-a10: var(--surface-a10);
+  --color-surface-a20: var(--surface-a20);
+  --color-surface-a30: var(--surface-a30);
+  --color-surface-a40: var(--surface-a40);
+  --color-surface-a50: var(--surface-a50);
+  --color-surface-a60: var(--surface-a60);
+  --color-surface-a70: var(--surface-a70);
+  --color-surface-tonal-a0: var(--surface-tonal-a0);
+  --color-surface-tonal-a10: var(--surface-tonal-a10);
+  --color-surface-tonal-a20: var(--surface-tonal-a20);
+  --color-surface-tonal-a30: var(--surface-tonal-a30);
+  --color-surface-tonal-a40: var(--surface-tonal-a40);
+  --color-surface-tonal-a50: var(--surface-tonal-a50);
+  --color-surface-tonal-a60: var(--surface-tonal-a60);
+  --color-surface-tonal-a70: var(--surface-tonal-a70);
+  --color-success-a0: var(--success-a0);
+  --color-success-a10: var(--success-a10);
+  --color-success-a20: var(--success-a20);
+  --color-warning-a0: var(--warning-a0);
+  --color-warning-a10: var(--warning-a10);
+  --color-warning-a20: var(--warning-a20);
+  --color-danger-a0: var(--danger-a0);
+  --color-danger-a10: var(--danger-a10);
+  --color-danger-a20: var(--danger-a20);
+  --color-info-a0: var(--info-a0);
+  --color-info-a10: var(--info-a10);
+  --color-info-a20: var(--info-a20);
+}
+
+:root {
+  --background: #f8f8ff;
+  --foreground: #0c090a;
+
+  /** Theme primary colors */
+  --primary-a0: #0cafff;
+  --primary-a10: #0998de;
+  --primary-a20: #0681be;
+  --primary-a30: #046b9e;
+  --primary-a40: #035680;
+  --primary-a50: #024163;
+  --primary-a60: #012e48;
+  --primary-a70: #001c2e;
+  --primary-a80: #000b16;
+  --primary-a90: #000103;
+
+  /** Theme surface colors */
+  --surface-a0: #f8f8ff;
+  --surface-a10: #ebebf2;
+  --surface-a20: #dfdfe4;
+  --surface-a30: #d3d3d7;
+  --surface-a40: #c6c6ca;
+  --surface-a50: #bababe;
+  --surface-a60: #aeaeb1;
+  --surface-a70: #a2a2a4;
+
+  /** Theme tonal surface colors */
+  --surface-tonal-a0: #e6f1ff;
+  --surface-tonal-a10: #dbe5f2;
+  --surface-tonal-a20: #d1d9e4;
+  --surface-tonal-a30: #c6ced7;
+  --surface-tonal-a40: #bcc2ca;
+  --surface-tonal-a50: #b2b7be;
+  --surface-tonal-a60: #a8acb1;
+  --surface-tonal-a70: #9da1a4;
+
+  /** Success colors */
+  --success-a0: #1b7f5c;
+  --success-a10: #489273;
+  --success-a20: #6aa58a;
+
+  /** Warning colors */
+  --warning-a0: #b8871f;
+  --warning-a10: #c3994c;
+  --warning-a20: #ceab6e;
+
+  /** Danger colors */
+  --danger-a0: #b13535;
+  --danger-a10: #c05752;
+  --danger-a20: #ce756f;
+
+  /** Info colors */
+  --info-a0: #1e56a3;
+  --info-a10: #416fb2;
+  --info-a20: #6188c1;
+}
+
+:root.dark {
+  --background: #0c090a;
+  --foreground: #f8f8ff;
+
+  /** Theme primary colors */
+  --primary-a0: #0cafff;
+  --primary-a10: #41b8ff;
+  --primary-a20: #5ec0ff;
+  --primary-a30: #76c8ff;
+  --primary-a40: #8bd1ff;
+  --primary-a50: #a0d9ff;
+  --primary-a60: #b4e1ff;
+  --primary-a70: #c7e8ff;
+  --primary-a80: #daf0ff;
+  --primary-a90: #ecf8ff;
+
+  /** Theme surface colors */
+  --surface-a0: #0c090a;
+  --surface-a10: #1f1c1d;
+  --surface-a20: #343132;
+  --surface-a30: #4a4748;
+  --surface-a40: #615f5f;
+  --surface-a50: #797778;
+  --surface-a60: #939191;
+  --surface-a70: #adabac;
+
+  /** Theme tonal surface colors */
+  --surface-tonal-a0: #12171d;
+  --surface-tonal-a10: #252a30;
+  --surface-tonal-a20: #393e44;
+  --surface-tonal-a30: #4f5358;
+  --surface-tonal-a40: #666a6e;
+  --surface-tonal-a50: #7e8185;
+  --surface-tonal-a60: #96999c;
+  --surface-tonal-a70: #afb1b4;
+
+  /** Success colors */
+  --success-a0: #22946e;
+  --success-a10: #5ba989;
+  --success-a20: #86bfa6;
+
+  /** Warning colors */
+  --warning-a0: #a87a2a;
+  --warning-a10: #ba945a;
+  --warning-a20: #cbae84;
+
+  /** Danger colors */
+  --danger-a0: #9c2121;
+  --danger-a10: #b4544c;
+  --danger-a20: #ca7f77;
+
+  /** Info colors */
+  --info-a0: #21498a;
+  --info-a10: #4b6ca2;
+  --info-a20: #7590ba;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

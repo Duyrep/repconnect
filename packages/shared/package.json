@@ -1,0 +1,18 @@
+{
+  "name": "@rep/shared",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsc",
+    "build": "tsc"
+  },
+  "exports": {
+    "./events": {
+      "types": "./src/events/chat.event.ts",
+      "default": "./dist/events/index.js"
+    }
+  },
+  "devDependencies": {
+    "tsx": "^4.22.4"
+  }
+}
