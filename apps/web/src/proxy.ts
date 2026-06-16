@@ -14,8 +14,6 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!accessToken && !refreshToken) {
-    console.log(accessToken, refreshToken);
-    console.log("accessToken refreshToken not found");
     return clearCookieAndRedirect(request.url);
   }
 
@@ -56,9 +54,7 @@ export async function proxy(request: NextRequest) {
     }
 
     return response;
-  } catch (error) {
-    console.error(error);
-  }
+  } catch (error) {}
 }
 
 export const config = {
@@ -66,7 +62,6 @@ export const config = {
 };
 
 function clearCookieAndRedirect(url: string) {
-  console.log("clear access_token refresh_token");
   const redirectResponse = NextResponse.redirect(new URL("/login", url));
   redirectResponse.cookies.delete("accessToken");
   redirectResponse.cookies.delete("refreshToken");
