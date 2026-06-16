@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { useSocketStore, type SocketState } from "./socket";
+import { useSocketStore } from "./socket";
 import { sendMessage } from "@/services";
 import { Message } from "@/interfaces";
-import { ChatEvent } from "@rep/shared/events";
+import { AppEvents } from "@rep/shared/events";
 
 export interface MessagePayload {
   conversationId: string;
@@ -11,6 +11,7 @@ export interface MessagePayload {
 
 export interface ChatState {
   join: (id: string) => void;
+  leave: () => void;
   sendMessage: (payload: MessagePayload) => Promise<boolean>;
   subscribeMessages: (listener: (message: Message) => void) => void;
   unsubscribeMessages: (listener: (message: Message) => void) => void;
@@ -18,11 +19,19 @@ export interface ChatState {
 
 export const useChatStore = create<ChatState>((get, set) => ({
   join: (id: string) => {
-    const { socket, isConnected, isConnecting } = useSocketStore.getState();
+    const { socket, isSocketReady } = useSocketStore.getState();
 
-    if (!socket || !isConnected || isConnecting) return;
+    if (!socket || !isSocketReady()) return;
 
-    socket.emit(ChatEvent.ConversationJoin, id);
+    socket.emit(AppEvents.ConversationJoin, id);
+  },
+
+  leave: () => {
+    const { socket, isSocketReady } = useSocketStore.getState();
+
+    if (!socket || !isSocketReady()) return;
+
+    socket.emit(AppEvents.ConversationLeave);
   },
 
   sendMessage: async (payload: MessagePayload) => {
@@ -42,7 +51,7 @@ export const useChatStore = create<ChatState>((get, set) => ({
 
     if (!socket || !isSocketReady()) return false;
 
-    socket.on(ChatEvent.MessageNew, listener);
+    socket.on(AppEvents.MessageNew, listener);
   },
 
   unsubscribeMessages: (listener: (message: Message) => void) => {
@@ -50,6 +59,6 @@ export const useChatStore = create<ChatState>((get, set) => ({
 
     if (!socket || !isSocketReady()) return false;
 
-    socket.off(ChatEvent.MessageNew, listener);
+    socket.off(AppEvents.MessageNew, listener);
   },
 }));

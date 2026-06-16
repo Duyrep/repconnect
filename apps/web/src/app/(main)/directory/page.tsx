@@ -195,12 +195,16 @@ function AddFriendDialog() {
                   {userSearched.friendShipStatus ===
                   FriendShipStatus.ACCEPTED ? (
                     <b className="pr-2">Friend</b>
+                  ) : userSearched.friendShipStatus ===
+                    FriendShipStatus.PENDING ? (
+                    <b className="pr-2">Pending</b>
                   ) : (
                     <Button
                       className="flex bg-primary-a0 rounded-md p-2"
                       onClick={async () => {
-                        if (user?.id)
-                          await requestFriend(user.id, userSearched.id);
+                        if (!user?.id) return;
+                        await requestFriend(user.id, userSearched.id);
+                        searchUser();
                       }}
                     >
                       <Plus />

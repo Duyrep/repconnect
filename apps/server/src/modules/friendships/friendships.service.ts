@@ -59,13 +59,12 @@ export class FriendshipsService {
       existing.requesterId = currentUserId;
       existing.recipientId = targetUserId;
       existing.status = FriendShipStatus.BLOCKED;
-      await existing.save(); // Lưu lại thay đổi
+      await existing.save();
     }
   }
 
   async cancel(requesterId: string, recipientId: string) {
-    if (!(await this.existsByRequesterId(requesterId)))
-      throw new NotFoundException();
+    if (!(await this.existsBetween(requesterId, recipientId))) return;
     await this.friendshipModel.deleteOne({ requesterId, recipientId });
   }
 
@@ -168,12 +167,14 @@ export class FriendshipsService {
   }
 
   async findByBetween(requesterId: string, recipientId: string) {
-    return await this.friendshipModel.findOne({
-      $or: [
-        { requesterId, recipientId },
-        { requesterId: recipientId, recipientId: requesterId },
-      ],
-    });
+    return await this.friendshipModel
+      .findOne({
+        $or: [
+          { requesterId, recipientId },
+          { requesterId: recipientId, recipientId: requesterId },
+        ],
+      })
+      .lean();
   }
 
   async existById(id: string) {

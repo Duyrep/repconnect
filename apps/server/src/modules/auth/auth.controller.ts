@@ -104,8 +104,11 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(AccessAuthGuard)
-  async logout(@Req() req: Request & { user: RefreshPayload }) {
+  async logout(
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request & { user: RefreshPayload },
+  ) {
     if (!req.user.sub) throw new BadRequestException();
-    await this.authService.logout(req.user.sub);
+    await this.authService.logout(res, req.user.sub);
   }
 }

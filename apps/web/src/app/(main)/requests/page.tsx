@@ -2,14 +2,7 @@
 
 import { FriendShip } from "@/interfaces";
 import getFriendShips from "@/services/getFriendShips";
-import {
-  ArrowLeft,
-  Check,
-  UserRound,
-  UserRoundPlus,
-  UsersRound,
-  X,
-} from "lucide-react";
+import { ArrowLeft, UserRound, UserRoundPlus, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Loading from "../loading";

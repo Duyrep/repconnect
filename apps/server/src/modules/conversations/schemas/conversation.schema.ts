@@ -1,10 +1,11 @@
 import { ConversationType } from '@/common/enums';
 import { generateId } from '@/common/utils';
+import { FriendShip } from '@/modules/friendships/schemas/friendship.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'conversations' })
-export class Conversation {
+export class Conversation<T extends ConversationType = ConversationType> {
   @Prop({
     default: () => generateId(), // TSID
     type: String,
@@ -18,11 +19,9 @@ export class Conversation {
     type: String,
     enum: ConversationType,
   })
-  type!: ConversationType;
+  type!: T;
 
-  @Prop({
-    type: String,
-  })
+  @Prop({ type: String })
   name?: string;
 
   @Prop({
@@ -35,6 +34,9 @@ export class Conversation {
     ],
   })
   participants!: string[];
+
+  @Prop({ type: String, ref: 'FriendShip' })
+  friendship?: T extends ConversationType.INDIVIDUAL ? string : never;
 
   createdAt?: Date;
   updatedAt?: Date;

@@ -17,7 +17,10 @@ export default function Chat() {
 
   useEffect(() => {
     (async () => {
-      const { conversations } = await getConversations();
+      const { conversations, status } = await getConversations();
+
+      if (status !== 200) return;
+
       setConversations(conversations);
     })();
   }, []);
@@ -48,8 +51,8 @@ export default function Chat() {
                   </div>
                   <div>
                     <b>
-                      {participants[0]?.displayName ??
-                        `@${participants[0].username}`}
+                      {participants.at(0)?.displayName ??
+                        `@${participants.at(0)?.username}`}
                     </b>
                   </div>
                 </div>

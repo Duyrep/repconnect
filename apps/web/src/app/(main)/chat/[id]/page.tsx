@@ -4,7 +4,7 @@ import { Button, Input } from "@/components/ui";
 import { ConversationType } from "@/enums";
 import { Conversation, Message } from "@/interfaces";
 import { getConversation, getMessages } from "@/services";
-import { useChatStore } from "@/store";
+import { useChatStore, useSocketStore } from "@/store";
 import { useUserStore } from "@/store/user";
 import { cn, formatRelativeTime } from "@/utils";
 import { ArrowLeft, CirclePlus, SendHorizonal, UserRound } from "lucide-react";
@@ -14,7 +14,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export default function Chat() {
   const storeUser = useUserStore((state) => state.user);
+  const socket = useSocketStore((state) => state.socket);
   const join = useChatStore((state) => state.join);
+  const leave = useChatStore((state) => state.leave);
   const storeSendMessage = useChatStore((state) => state.sendMessage);
   const subscribeMessages = useChatStore((state) => state.subscribeMessages);
   const unsubscribeMessages = useChatStore(
@@ -45,20 +47,6 @@ export default function Chat() {
 
     if (!status || !storeUser) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        sender: {
-          id: storeUser.id,
-          username: storeUser.username,
-          displayName: storeUser.displayName,
-        },
-        content,
-        createdAt: new Date().toString(),
-      },
-    ]);
-
     setContent("");
   };
 
@@ -86,6 +74,21 @@ export default function Chat() {
       });
   };
 
+  useEffect(() => {
+    const handleNewMessage = (message: Message) => {
+      setMessages((prev) => [...prev, message]);
+    };
+
+    subscribeMessages(handleNewMessage);
+
+    return () => unsubscribeMessages(handleNewMessage);
+  }, [socket]);
+
+  useEffect(() => {
+    join(id);
+    return () => leave();
+  }, [socket]);
+
   useLayoutEffect(() => {
     const chat = chatContainerRef.current;
     if (scrollSnapshot && chat) {
@@ -110,8 +113,6 @@ export default function Chat() {
 
     fetchConversation();
 
-    join(id);
-
     (async () => {
       const { messages, status } = await getMessages(id);
 
@@ -121,17 +122,6 @@ export default function Chat() {
       setIsFirstLoad(false);
       setAreMessagesLoading(false);
     })();
-  }, [storeUser]);
-
-  useEffect(() => {
-    const handleNewMessage = (message: Message) => {
-      if (message.sender.id === storeUser?.id) return;
-      setMessages((prev) => [...prev, message]);
-    };
-
-    subscribeMessages(handleNewMessage);
-
-    return () => unsubscribeMessages(handleNewMessage);
   }, [storeUser]);
 
   useEffect(() => {

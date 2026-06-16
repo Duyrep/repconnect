@@ -7,11 +7,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EnvironmentVariables } from './common/interfaces';
-import { FriendshipModule } from './modules/friendships/friendships.module';
+import { FriendshipsModule } from './modules/friendships/friendships.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MessagesModule } from './modules/messages/messages.module';
-import { ChatModule } from './modules/chat/chat.module';
+import { ChatModule } from './modules/app/app.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
+
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -26,6 +28,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         dbName: 'repconnect',
       }),
     }),
+
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService<EnvironmentVariables>) => ({
@@ -33,19 +36,33 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       }),
       inject: [ConfigService],
     }),
+
     EventEmitterModule.forRoot({
       wildcard: true,
       verboseMemoryLeak: true,
     }),
 
+    ThrottlerModule.forRoot([
+      {
+        name: 'burst',
+        ttl: 5000,
+        limit: 5,
+      },
+      {
+        name: 'sustained',
+        ttl: 60000,
+        limit: 30,
+      },
+    ]),
+
     AuthModule,
     UsersModule,
-    FriendshipModule,
+    FriendshipsModule,
     ConversationsModule,
     MessagesModule,
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ThrottlerGuard],
 })
 export class AppModule {}

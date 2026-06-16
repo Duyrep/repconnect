@@ -6,11 +6,10 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
-import { ChatService } from './chat.service';
+import { AppService } from './app.service';
 import { Server, Socket } from 'socket.io';
-import { ChatEvent } from '@rep/shared/events';
+import { AppEvents } from '@rep/shared/events';
 import { AuthService } from '../auth/auth.service';
 import * as cookie from 'cookie';
 import { UsersService } from '../users/users.service';
@@ -19,7 +18,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { MessageCreatedEvent, MessageEvent } from '@/common/events';
 
 interface AuthenticatedSocket extends Socket {
-  user: {
+  user?: {
     id: string;
     username: string;
     displayName?: string;
@@ -33,12 +32,12 @@ interface AuthenticatedSocket extends Socket {
     credentials: true,
   },
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private readonly server!: Server;
 
   constructor(
-    private readonly chatService: ChatService,
+    private readonly appService: AppService,
     private readonly conversationsService: ConversationsService,
     private readonly usersServer: UsersService,
     private readonly authService: AuthService,
@@ -83,11 +82,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {}
 
-  @SubscribeMessage(ChatEvent.ConversationJoin)
+  @SubscribeMessage(AppEvents.ConversationJoin)
   async handleJoinRoom(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() conversationId: string,
   ) {
+    if (!client.user) return;
+
     const conversation = await this.conversationsService.getConversationForUser(
       client.user.id,
       conversationId,
@@ -101,8 +102,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.join(conversation._id);
   }
 
+  @SubscribeMessage(AppEvents.ConversationLeave)
+  async handleLeaveRoom(@ConnectedSocket() client: AuthenticatedSocket) {
+    if (!client.conversationId) return;
+
+    client.leave(client.conversationId);
+    client.conversationId = undefined;
+  }
+
   @OnEvent(MessageEvent.Created)
   public handleMessageCreatedEvent(payload: MessageCreatedEvent) {
-    this.server.to(payload.conversationId).emit(ChatEvent.MessageNew, payload);
+    this.server.to(payload.conversationId).emit(AppEvents.MessageNew, payload);
   }
 }

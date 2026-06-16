@@ -1,12 +1,13 @@
 "use client";
 
 import { useUserStore } from "@/store/user";
-import { CircleUserRound } from "lucide-react";
+import { ArrowLeft, CircleUserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { User } from "@/interfaces";
 import { useParams, useRouter } from "next/navigation";
 import getUserByUsername from "@/services/getUserByUsername";
 import Loading from "@/app/(main)/loading";
+import Link from "next/link";
 
 export default function Profile() {
   const { username } = useParams() as { username: string };
@@ -37,14 +38,21 @@ export default function Profile() {
     );
 
   return (
-    <div className="h-full flex justify-center items-center">
-      <div className="flex flex-col gap-4 justify-center items-center bg-surface-a10 rounded-md p-16">
-        <CircleUserRound size={96} strokeWidth={1} />
-        <div className="flex flex-col items-center">
-          <b className="text-2xl">{user.displayName}</b>
-          <p>@{user.username}</p>
+    <>
+      <nav className="flex items-center p-2 bg-surface-a30 rounded-b-md h-14">
+        <Link href="/chat">
+          <ArrowLeft size={32} />
+        </Link>
+      </nav>
+      <div className="h-full flex justify-center items-center">
+        <div className="flex flex-col gap-4 justify-center items-center bg-surface-a10 rounded-md p-16">
+          <CircleUserRound size={96} strokeWidth={1} />
+          <div className="flex flex-col items-center">
+            <b className="text-2xl">{user.displayName}</b>
+            <p>@{user.username}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

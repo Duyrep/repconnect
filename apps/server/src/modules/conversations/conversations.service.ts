@@ -9,13 +9,15 @@ import { UpdateConversationDto } from './dto/update-conversation.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Conversation } from './schemas/conversation.schema';
 import { Model } from 'mongoose';
-import { ConversationType } from '@/common/enums';
+import { ConversationType, FriendShipStatus } from '@/common/enums';
+import { FriendshipsService } from '../friendships/friendships.service';
 
 @Injectable()
 export class ConversationsService {
   constructor(
     @InjectModel(Conversation.name)
     private readonly conversationModel: Model<Conversation>,
+    private readonly friendshipsService: FriendshipsService,
   ) {}
 
   async create(createConversationDto: CreateConversationDto) {
@@ -28,34 +30,64 @@ export class ConversationsService {
     )
       throw new BadRequestException();
 
-    return await this.conversationModel.create({ type, participants });
+    if (type === ConversationType.INDIVIDUAL) {
+      const [participant1, participant2] = participants;
+
+      const friendship = await this.friendshipsService.findByBetween(
+        participant1,
+        participant2,
+      );
+
+      if (!friendship || friendship.status !== FriendShipStatus.ACCEPTED)
+        throw new BadRequestException();
+
+      return await this.conversationModel.create({
+        type,
+        participants,
+        friendship: friendship._id,
+      });
+    } else return await this.conversationModel.create({ type, participants });
   }
 
   async findByUserId(userId: string) {
-    return (
-      await this.conversationModel
-        .find({ participants: userId })
-        .populate({ path: 'participants', select: '_id username displayName' })
-        .sort({ updateAt: -1 })
-        .lean<
-          ({
-            participants: {
-              _id: string;
-              username: string;
-              displayName: string;
-            }[];
-          } & Conversation)[]
-        >()
-    ).map(({ _id, participants, type, createdAt, updatedAt }) => ({
-      id: _id,
-      participants:
-        type === ConversationType.INDIVIDUAL
-          ? participants.filter(({ _id }) => _id !== userId)
-          : participants,
-      type,
-      createdAt,
-      updatedAt,
-    }));
+    const conversations = await this.conversationModel
+      .find({ participants: userId })
+      .populate({ path: 'participants', select: '_id username displayName' })
+      .populate({ path: 'friendship', select: '_id status' })
+      .sort({ updateAt: -1 })
+      .lean<
+        {
+          _id: string;
+          type: ConversationType;
+          name: string;
+          participants: {
+            _id: string;
+            username: string;
+            displayName: string;
+          }[];
+          friendship?: { _id: string; status: FriendShipStatus };
+          createdAt: Date;
+          updatedAt: Date;
+        }[]
+      >();
+
+    return conversations
+      .map(({ _id, participants, type, friendship, createdAt, updatedAt }) => {
+        if (!friendship || friendship.status !== FriendShipStatus.ACCEPTED)
+          return false;
+
+        return {
+          id: _id,
+          participants:
+            type === ConversationType.INDIVIDUAL
+              ? participants.filter(({ _id }) => _id !== userId)
+              : participants,
+          type,
+          createdAt,
+          updatedAt,
+        };
+      })
+      .filter((v) => v);
   }
 
   async findIndividual(userId1: string, userId2: string) {
@@ -125,7 +157,13 @@ export class ConversationsService {
     const conversation = await this.findOne(conversationId);
 
     if (!conversation.participants.some((v) => v._id === userId))
-      throw new ForbiddenException('Forbidden');
+      throw new ForbiddenException();
+
+    if (conversation.type === ConversationType.INDIVIDUAL) {
+      const [user1, user2] = conversation.participants;
+      if (!(await this.friendshipsService.existsBetween(user1._id, user2._id)))
+        throw new NotFoundException();
+    }
 
     return conversation;
   }

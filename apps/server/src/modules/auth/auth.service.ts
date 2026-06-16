@@ -14,8 +14,9 @@ export class AuthService {
     private readonly userService: UsersService,
   ) {}
 
-  async logout(id: string) {
+  async logout(res: Response, id: string) {
     await this.userService.incrementTokenVersion(id);
+    res.clearCookie('accessToken');
   }
 
   async issueAccessToken(res: Response, payload: AccessPayload) {

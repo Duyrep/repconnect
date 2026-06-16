@@ -13,6 +13,7 @@ import { MessageCreatedEvent, MessageEvent } from '@/common/events';
 import * as CryptoJS from 'crypto-js';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '@/common/interfaces';
+import { FriendshipsService } from '../friendships/friendships.service';
 
 @Injectable()
 export class MessagesService {
@@ -20,6 +21,7 @@ export class MessagesService {
     @InjectModel(Message.name) private readonly messageModel: Model<Message>,
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly conversationService: ConversationsService,
+    private readonly friendShipsService: FriendshipsService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -73,9 +75,17 @@ export class MessagesService {
     return message;
   }
 
-  async findByConversationId(id: string, limit: number = 50, date?: string) {
-    if (!(await this.conversationService.exist(id)))
-      throw new NotFoundException();
+  async findByConversationId(
+    userId: string,
+    conversationId: string,
+    limit: number = 50,
+    date?: string,
+  ) {
+    const conversation = await this.conversationService.getConversationForUser(
+      userId,
+      conversationId,
+    );
+    if (!conversation) throw new NotFoundException();
 
     const queryDate = date ? new Date(date) : new Date();
     if (isNaN(queryDate.getTime())) {
@@ -84,7 +94,7 @@ export class MessagesService {
 
     const messages = await this.messageModel
       .find({
-        conversationId: id,
+        conversationId: conversationId,
         createdAt: { $lt: queryDate },
       })
       .limit(limit)

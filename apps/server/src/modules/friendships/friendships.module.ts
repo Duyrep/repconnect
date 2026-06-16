@@ -14,4 +14,4 @@ import { FriendShip, FriendShipSchema } from './schemas/friendship.schema';
   providers: [FriendshipsService],
   exports: [FriendshipsService, MongooseModule],
 })
-export class FriendshipModule {}
+export class FriendshipsModule {}

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MessagesService } from '../messages/messages.service';
 
 @Injectable()
-export class ChatService {
+export class AppService {
   constructor(private readonly messageService: MessagesService) {}
 
   public async saveMessage(
