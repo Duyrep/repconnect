@@ -1,8 +1,14 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - apps/*
+  - packages/*
+
 allowBuilds:
   '@nestjs/core': true
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver
