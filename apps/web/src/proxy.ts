@@ -40,7 +40,6 @@ export async function proxy(request: NextRequest) {
     );
 
     if (resRefresh.status === 401) {
-      console.log("resRefresh.status 401");
       return clearCookieAndRedirect(request.url);
     }
 

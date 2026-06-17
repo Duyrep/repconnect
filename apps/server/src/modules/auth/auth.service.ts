@@ -26,7 +26,7 @@ export class AuthService {
       maxAge: 15 * 60 * 1000, // 15m
       httpOnly: true,
       secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'none',
+      sameSite: false,
       path: '/',
     });
   }
@@ -37,7 +37,7 @@ export class AuthService {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'none',
+      sameSite: false,
       path: '/',
     });
   }

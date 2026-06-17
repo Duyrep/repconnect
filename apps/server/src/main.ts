@@ -9,6 +9,8 @@ async function bootstrap() {
     logger: ['log', 'fatal', 'error', 'warn', 'debug', 'verbose'],
   });
 
+  console.log(process.env.NODE_ENV);
+
   app.setGlobalPrefix('api');
 
   app.enableCors({ origin: [process.env.FRONTEND_URL], credentials: true });
