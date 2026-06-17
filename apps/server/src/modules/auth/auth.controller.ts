@@ -96,8 +96,6 @@ export class AuthController {
     await this.authService.issueAccessToken(res, { sub, tov, roles });
     await this.authService.issueRefreshToken(res, { sub, tov });
 
-    console.log(res.getHeader('set-cookie'));
-
     return {
       url: `${this.configSerVice.get<string>('FRONTEND_URL')}`,
       statusCode: 302,
