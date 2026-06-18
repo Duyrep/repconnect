@@ -19,14 +19,11 @@ export default function Providers({
     connect();
 
     return () => {
-      console.log("provider socket disconnect");
       disconnect();
     };
   }, []);
 
-  useEffect(() => {
-    console.log("provider socket", socket);
-  }, [socket]);
+  useEffect(() => {}, [socket]);
 
   return children;
 }

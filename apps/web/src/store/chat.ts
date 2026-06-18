@@ -37,10 +37,7 @@ export const useChatStore = create<ChatState>((get, set) => ({
   sendMessage: async (payload: MessagePayload) => {
     const { socket, isSocketReady } = useSocketStore.getState();
 
-    console.log("store socket", socket, "is socket ready", isSocketReady());
     if (!socket || !isSocketReady()) return false;
-
-    console.log("store sending message");
 
     const { status } = await sendMessage(payload);
 

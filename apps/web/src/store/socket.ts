@@ -24,15 +24,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
   connect: async () => {
     const { socket, isConnected, isConnecting } = get();
 
-    console.log(
-      "connect.socket",
-      socket,
-      "connect.isConnected",
-      isConnected,
-      "connect.isConnecting",
-      isConnecting,
-    );
-
     if (socket || isConnected || isConnecting) return;
 
     set({ isConnecting: true });
@@ -48,10 +39,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       transports: ["websocket"],
     });
 
-    console.log("socket connecting");
-
     newSocket.on("connect", async () => {
-      console.log("socket connected");
       set({
         socket: newSocket,
         isConnected: true,
@@ -66,7 +54,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
 
     newSocket.on("disconnect", (reason) => {
-      console.log("disconnect reason", reason);
       set({
         socket: undefined,
         isConnected: false,
