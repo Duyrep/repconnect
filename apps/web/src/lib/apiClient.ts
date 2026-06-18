@@ -36,9 +36,8 @@ async function refresh() {
     );
 
     if (response.status === 401) {
-      // test
-      // Cookies.remove("access_token");
-      // Cookies.remove("refresh_token");
+      Cookies.remove("access_token");
+      Cookies.remove("refresh_token");
       window.location.href = "/login";
     }
   } catch (error) {

@@ -62,8 +62,7 @@ export const config = {
 
 function clearCookieAndRedirect(url: string) {
   const redirectResponse = NextResponse.redirect(new URL("/login", url));
-  // test
-  // redirectResponse.cookies.delete("accessToken");
-  // redirectResponse.cookies.delete("refreshToken");
+  redirectResponse.cookies.delete("accessToken");
+  redirectResponse.cookies.delete("refreshToken");
   return redirectResponse;
 }
