@@ -25,7 +25,7 @@ export class AuthService {
     res.cookie('accessToken', accessToken, {
       maxAge: 15 * 60 * 1000, // 15m
       httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      // secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite:
         this.configService.get<string>('NODE_ENV') === 'production'
           ? 'none'
@@ -39,7 +39,7 @@ export class AuthService {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      // secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite:
         this.configService.get<string>('NODE_ENV') === 'production'
           ? 'none'
