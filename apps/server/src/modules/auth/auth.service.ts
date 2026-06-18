@@ -28,7 +28,7 @@ export class AuthService {
       secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite:
         this.configService.get<string>('NODE_ENV') === 'production'
-          ? 'lax'
+          ? 'none'
           : false,
       path: '/',
     });
@@ -42,7 +42,7 @@ export class AuthService {
       secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite:
         this.configService.get<string>('NODE_ENV') === 'production'
-          ? 'lax'
+          ? 'none'
           : false,
       path: '/',
     });
