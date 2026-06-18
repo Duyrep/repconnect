@@ -23,6 +23,15 @@ export const useSocketStore = create<SocketState>((set, get) => ({
   connect: () => {
     const { socket, isConnected, isConnecting } = get();
 
+    console.log(
+      "connect.socket",
+      socket,
+      "connect.isConnected",
+      isConnected,
+      "connect.isConnecting",
+      isConnecting,
+    );
+
     if (socket || isConnected || isConnecting) return;
 
     set({ isConnecting: true });
@@ -32,7 +41,10 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       transports: ["websocket", "polling"],
     });
 
+    console.log("socket connecting");
+
     newSocket.on("connect", async () => {
+      console.log("socket connected");
       set({
         socket: newSocket,
         isConnected: true,
