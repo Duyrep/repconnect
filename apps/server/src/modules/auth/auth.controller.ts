@@ -82,6 +82,9 @@ export class AuthController {
       roles = [UserRole.USER];
     const { client_id } = req.user;
 
+    // test
+    console.log(req.user);
+
     const exists = await this.userService.exists({ client_id });
 
     if (exists) {
