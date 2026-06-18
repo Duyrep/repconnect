@@ -30,7 +30,6 @@ export class MessagesController {
     @Body() createMessageDto: CreateMessageDto,
     @Req() req: Request & { user: AccessPayload },
   ) {
-    console.log('test');
     await this.messagesService.create(req.user.sub, createMessageDto);
   }
 

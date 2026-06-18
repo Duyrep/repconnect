@@ -15,5 +15,7 @@ export default async function sendMessage(payload: {
     },
   );
 
+  console.log(response.status, response.ok, response);
+
   return { status: response.status };
 }
