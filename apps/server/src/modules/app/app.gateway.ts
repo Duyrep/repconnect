@@ -45,19 +45,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(@ConnectedSocket() client: AuthenticatedSocket) {
     try {
-      const rawCookie = client.handshake.headers.cookie;
-
-      // test
-      console.log('rawCookie', rawCookie);
-
-      if (!rawCookie) {
-        client.disconnect(true);
-        return;
-      }
-
-      const { accessToken } = cookie.parse(rawCookie) as {
-        accessToken?: string;
-      };
+      const accessToken = client.handshake.auth.accessToken;
 
       if (!accessToken) {
         client.disconnect(true);

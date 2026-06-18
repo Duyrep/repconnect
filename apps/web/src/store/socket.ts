@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { io, Socket } from "socket.io-client";
+import { apiClient } from "@/lib";
 
 export interface SocketState {
   socket?: Socket;
@@ -20,7 +21,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
   error: undefined,
   disconnectReason: undefined,
 
-  connect: () => {
+  connect: async () => {
     const { socket, isConnected, isConnecting } = get();
 
     console.log(
@@ -36,7 +37,13 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     set({ isConnecting: true });
 
+    const response = await apiClient(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/me-token`,
+    );
+    const accessToken = await response.text();
+
     const newSocket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
+      auth: { accessToken },
       withCredentials: true,
       transports: ["websocket"],
     });

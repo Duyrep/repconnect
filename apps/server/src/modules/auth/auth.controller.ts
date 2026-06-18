@@ -36,7 +36,6 @@ export class AuthController {
   @Get('me')
   @UseGuards(AccessAuthGuard)
   async me(@Req() req: Request & { user: AccessPayload }) {
-    if (!req.user.sub) throw new UnauthorizedException();
     const user = await this.userService.findOne({ _id: req.user.sub });
 
     return {
@@ -47,6 +46,12 @@ export class AuthController {
       roles: user?.roles,
       createAt: user?.createdAt,
     };
+  }
+
+  @Get('me-token')
+  @UseGuards(AccessAuthGuard)
+  async meToken(@Req() req) {
+    return req.cookies['accessToken'];
   }
 
   @Get('refresh')
@@ -108,7 +113,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Req() req: Request & { user: RefreshPayload },
   ) {
-    if (!req.user.sub) throw new BadRequestException();
     await this.authService.logout(res, req.user.sub);
   }
 }
