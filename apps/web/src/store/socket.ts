@@ -38,7 +38,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     const newSocket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
       withCredentials: true,
-      transports: ["polling", "websocket"],
+      transports: ["websocket"],
     });
 
     console.log("socket connecting");
