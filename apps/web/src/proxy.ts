@@ -5,8 +5,6 @@ export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
 
-  console.log(accessToken, refreshToken);
-
   const { pathname } = request.nextUrl;
   if (pathname.startsWith("/login")) {
     if (accessToken || refreshToken) {
@@ -64,7 +62,8 @@ export const config = {
 
 function clearCookieAndRedirect(url: string) {
   const redirectResponse = NextResponse.redirect(new URL("/login", url));
-  redirectResponse.cookies.delete("accessToken");
-  redirectResponse.cookies.delete("refreshToken");
+  // test
+  // redirectResponse.cookies.delete("accessToken");
+  // redirectResponse.cookies.delete("refreshToken");
   return redirectResponse;
 }
