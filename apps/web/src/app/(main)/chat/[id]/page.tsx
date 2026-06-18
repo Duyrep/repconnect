@@ -43,6 +43,7 @@ export default function Chat() {
   const sendMessage = async () => {
     if (content.length === 0) return;
 
+    console.log("sending message");
     const status = await storeSendMessage({ conversationId: id, content });
 
     if (!status || !storeUser) return;
