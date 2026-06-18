@@ -18,7 +18,10 @@ export default function Providers({
 
     connect();
 
-    return () => disconnect();
+    return () => {
+      console.log("provider socket disconnect");
+      disconnect();
+    };
   }, []);
 
   useEffect(() => {
