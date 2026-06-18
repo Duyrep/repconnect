@@ -1,10 +1,8 @@
-import Link from "next/link";
-
 function GoogleIcon() {
   return (
     <svg
       width="32px"
-      height="32x"
+      height="32px"
       viewBox="-0.5 0 48 48"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
@@ -54,14 +52,14 @@ export default function Login() {
     <div className="h-full flex justify-center items-center">
       <div className="flex flex-col gap-10 items-center">
         <h1 className="text-3xl font-bold">Log in with</h1>
-        <Link
+        <a
           title="Google"
           href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
           className="flex items-center font-bold gap-2 bg-white text-black px-4 py-2 rounded-md"
         >
           <GoogleIcon />
           Google
-        </Link>
+        </a>
       </div>
     </div>
   );
