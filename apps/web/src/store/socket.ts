@@ -59,6 +59,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
 
     newSocket.on("disconnect", (reason) => {
+      console.log("disconnect reason", reason);
       set({
         socket: undefined,
         isConnected: false,
