@@ -11,6 +11,10 @@
       "cache": false,
       "persistent": true
     },
+    "start:local": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
