@@ -11,6 +11,7 @@ export default function Providers({
   const fetchUser = useUserStore((status) => status.fetchUser);
   const connect = useSocketStore((status) => status.connect);
   const disconnect = useSocketStore((status) => status.disconnect);
+  const socket = useSocketStore((status) => status.socket);
 
   useEffect(() => {
     fetchUser();
@@ -19,6 +20,10 @@ export default function Providers({
 
     return () => disconnect();
   }, []);
+
+  useEffect(() => {
+    console.log("provider socket", socket);
+  }, [socket]);
 
   return children;
 }
