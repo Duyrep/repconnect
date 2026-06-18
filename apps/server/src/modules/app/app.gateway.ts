@@ -47,6 +47,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const rawCookie = client.handshake.headers.cookie;
 
+      // test
+      console.log('rawCookie', rawCookie);
+
       if (!rawCookie) {
         client.disconnect(true);
         return;
