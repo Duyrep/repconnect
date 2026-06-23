@@ -1,9 +1,10 @@
-import { ConversationType } from "@/enums";
+import { ConversationType } from "@rep/shared/enums";
 
-export interface Conversation {
+export default interface Conversation {
   id: string;
-  participants: { _id: string; username: string; displayName: string }[];
   type: ConversationType;
-  createdAt: string;
-  updatedAt: string;
+  name?: string;
+  participants: { id: string; username: string; displayName: string }[];
+  createdAt: Date;
+  updatedAt: Date;
 }

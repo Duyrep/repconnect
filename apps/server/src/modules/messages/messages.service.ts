@@ -21,7 +21,6 @@ export class MessagesService {
     @InjectModel(Message.name) private readonly messageModel: Model<Message>,
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly conversationService: ConversationsService,
-    private readonly friendShipsService: FriendshipsService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -38,7 +37,7 @@ export class MessagesService {
 
     const newMessage = await this.messageModel.create({
       sender: userId,
-      conversationId: conversation._id,
+      conversationId: conversation.id,
       content,
     });
 

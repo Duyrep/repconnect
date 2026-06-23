@@ -37,18 +37,10 @@ export class ConversationsController {
     @Req() req: Request & { user: AccessPayload },
     @Param('userId') targetUserId: string,
   ) {
-    const conversation = await this.conversationsService.findIndividual(
+    return await this.conversationsService.findIndividual(
       req.user.sub,
       targetUserId,
     );
-
-    return {
-      id: conversation.id,
-      participants: conversation.participants,
-      type: conversation.type,
-      createdAt: conversation.createdAt,
-      updatedAt: conversation.updatedAt,
-    };
   }
 
   @Get(':id')
@@ -58,16 +50,10 @@ export class ConversationsController {
   ) {
     const conversation = await this.conversationsService.findOne(id);
 
-    if (!conversation.participants.some((v) => v._id === req.user.sub))
+    if (!conversation.participants.some((v) => v.id === req.user.sub))
       throw new ForbiddenException();
 
-    return {
-      id: conversation._id,
-      participants: conversation.participants,
-      type: conversation.type,
-      createdAt: conversation.createdAt,
-      updatedAt: conversation.updatedAt,
-    };
+    return conversation;
   }
 
   @Patch(':id')

@@ -96,9 +96,33 @@ export class ConversationsService {
         type: ConversationType.INDIVIDUAL,
         participants: { $all: [userId1, userId2], $size: 2 },
       })
+      .lean<{
+        _id: string;
+        type: ConversationType;
+        name: string;
+        participants: {
+          _id: string;
+          username: string;
+          displayName: string;
+        }[];
+        friendship?: { _id: string; status: FriendShipStatus };
+        createdAt: Date;
+        updatedAt: Date;
+      }>()
       .exec();
 
-    if (conversation) return conversation;
+    if (conversation)
+      return {
+        ...conversation,
+        id: conversation._id,
+        participants: conversation.participants.map(
+          ({ _id, username, displayName }) => ({
+            id: _id,
+            username,
+            displayName,
+          }),
+        ),
+      };
 
     return await this.create({
       type: ConversationType.INDIVIDUAL,
@@ -130,7 +154,7 @@ export class ConversationsService {
   async findOne(id: string) {
     const conversation = await this.conversationModel
       .findOne({ _id: id })
-      .populate({ path: 'participants', select: 'username displayName' })
+      .populate({ path: 'participants', select: '_id username displayName' })
       .lean<{
         _id: string;
         type: ConversationType;
@@ -142,7 +166,20 @@ export class ConversationsService {
       .exec();
 
     if (!conversation) throw new NotFoundException();
-    return conversation;
+    return {
+      id: conversation._id,
+      type: conversation.type,
+      name: conversation.name,
+      participants: conversation.participants.map(
+        ({ _id, username, displayName }) => ({
+          id: _id,
+          username,
+          displayName,
+        }),
+      ),
+      createdAt: conversation.createdAt,
+      updatedAt: conversation.updatedAt,
+    };
   }
 
   update(id: string, updateConversationDto: UpdateConversationDto) {
@@ -156,12 +193,12 @@ export class ConversationsService {
   async getConversationForUser(userId, conversationId: string) {
     const conversation = await this.findOne(conversationId);
 
-    if (!conversation.participants.some((v) => v._id === userId))
+    if (!conversation.participants.some((v) => v.id === userId))
       throw new ForbiddenException();
 
     if (conversation.type === ConversationType.INDIVIDUAL) {
       const [user1, user2] = conversation.participants;
-      if (!(await this.friendshipsService.existsBetween(user1._id, user2._id)))
+      if (!(await this.friendshipsService.existsBetween(user1.id, user2.id)))
         throw new NotFoundException();
     }
 

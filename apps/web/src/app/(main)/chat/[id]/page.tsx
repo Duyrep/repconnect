@@ -1,18 +1,21 @@
 "use client";
 
+import { ChatHeader } from "@/components/features/chat";
 import { Button, Input } from "@/components/ui";
-import { ConversationType } from "@/enums";
-import { Conversation, Message } from "@/interfaces";
-import { getConversation, getMessages } from "@/services";
-import { useChatStore, useSocketStore } from "@/store";
+import { Message } from "@/interfaces";
+import { getMessages } from "@/services";
+import { useChatStore, useConversationStore, useSocketStore } from "@/store";
 import { useUserStore } from "@/store/user";
 import { cn, formatRelativeTime } from "@/utils";
-import { ArrowLeft, CirclePlus, SendHorizonal, UserRound } from "lucide-react";
-import Link from "next/link";
+import { CirclePlus, SendHorizonal, UserRound } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-export default function Chat() {
+// export default function Page() {
+//   return <Chat />;
+// }
+
+export default function Page() {
   const storeUser = useUserStore((state) => state.user);
   const socket = useSocketStore((state) => state.socket);
   const join = useChatStore((state) => state.join);
@@ -22,13 +25,18 @@ export default function Chat() {
   const unsubscribeMessages = useChatStore(
     (state) => state.unsubscribeMessages,
   );
+  const fetchConversation = useConversationStore(
+    (state) => state.fetchConversation,
+  );
+  const clearConversation = useConversationStore(
+    (state) => state.clearConversation,
+  );
 
   const messageInputRef = useRef<HTMLInputElement>(null);
   const chatContainerRef = useRef<HTMLElement>(null);
 
-  const { id } = useParams() as { id: string };
+  const { id: conversationId } = useParams() as { id: string };
 
-  const [name, setName] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [scrollSnapshot, setScrollSnapshot] = useState<{
     scrollHeight: number;
@@ -38,13 +46,11 @@ export default function Chat() {
   const [areMessagesLoading, setAreMessagesLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isHasMoreMessages, setIsHasMoreMessages] = useState(true);
-  const [conversation, setConversation] = useState<Conversation | undefined>();
 
   const sendMessage = async () => {
     if (content.length === 0) return;
 
-    console.log("sending message");
-    const status = await storeSendMessage({ conversationId: id, content });
+    const status = await storeSendMessage({ conversationId, content });
 
     if (!status || !storeUser) return;
 
@@ -57,7 +63,11 @@ export default function Chat() {
     const date = messages.at(0)?.createdAt;
     if (!date) return;
 
-    const { messages: newMessages } = await getMessages(id, 50, date);
+    const { messages: newMessages } = await getMessages(
+      conversationId,
+      50,
+      date,
+    );
 
     if (newMessages.length === 0) {
       setIsHasMoreMessages(false);
@@ -76,6 +86,11 @@ export default function Chat() {
   };
 
   useEffect(() => {
+    fetchConversation(conversationId);
+    return () => clearConversation();
+  }, [conversationId]);
+
+  useEffect(() => {
     const handleNewMessage = (message: Message) => {
       setMessages((prev) => [...prev, message]);
     };
@@ -86,7 +101,7 @@ export default function Chat() {
   }, [socket]);
 
   useEffect(() => {
-    join(id);
+    join(conversationId);
     return () => leave();
   }, [socket]);
 
@@ -100,22 +115,8 @@ export default function Chat() {
   }, [messages, scrollSnapshot]);
 
   useEffect(() => {
-    const fetchConversation = async () => {
-      const { conversation } = await getConversation(id);
-      setConversation(conversation);
-
-      if (conversation.type === ConversationType.INDIVIDUAL) {
-        const user = conversation?.participants.filter(
-          ({ username }) => storeUser?.username !== username,
-        )[0];
-        if (user) setName(user.displayName ?? user.username);
-      }
-    };
-
-    fetchConversation();
-
     (async () => {
-      const { messages, status } = await getMessages(id);
+      const { messages, status } = await getMessages(conversationId);
 
       if (status !== 200) return;
 
@@ -123,7 +124,7 @@ export default function Chat() {
       setIsFirstLoad(false);
       setAreMessagesLoading(false);
     })();
-  }, [storeUser]);
+  }, [conversationId]);
 
   useEffect(() => {
     if (isFirstLoad) return;
@@ -144,19 +145,7 @@ export default function Chat() {
 
   return (
     <>
-      <nav className="flex flex-col bg-surface-a30 rounded-b-md">
-        <div className="flex items-center gap-2 font-bold text-lg p-2">
-          <Link href="/chat">
-            <ArrowLeft size={32} />
-          </Link>
-          <div className="flex items-center">
-            <div className="p-2 bg-surface-a10 rounded-full">
-              <UserRound size={24} />
-            </div>
-          </div>
-          {name}
-        </div>
-      </nav>
+      <ChatHeader />
       <main
         ref={chatContainerRef}
         className="flex-1 w-full h-full flex flex-col overflow-auto"

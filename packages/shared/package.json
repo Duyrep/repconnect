@@ -8,8 +8,16 @@
   },
   "exports": {
     "./events": {
-      "types": "./src/events/chat.event.ts",
+      "types": "./src/events/index.ts",
       "default": "./dist/events/index.js"
+    },
+    "./interfaces": {
+      "types": "./src/interfaces/index.ts",
+      "default": "./dist/interfaces/index.js"
+    },
+    "./enums": {
+      "types": "./src/enums/index.ts",
+      "default": "./dist/enums/index.js"
     }
   },
   "devDependencies": {

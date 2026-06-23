@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import { Providers } from "@/components";
-import BotNavBar from "@/components/layout/BotNavBar";
 
 export const metadata: Metadata = {
   title: "RepConnect",

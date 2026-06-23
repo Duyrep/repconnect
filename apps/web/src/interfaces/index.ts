@@ -1,6 +1,6 @@
 import type { User } from "./User";
 import type { FriendShip } from "./FriendShip";
-import type { Conversation } from "./Conversation";
 import type { Message } from "./Message";
+import type Conversation from "./Conversation";
 
-export type { User, FriendShip, Conversation, Message };
+export type { User, FriendShip, Message, Conversation };

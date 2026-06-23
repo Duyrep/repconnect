@@ -89,8 +89,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.leave(client.conversationId);
     }
 
-    client.conversationId = conversation._id;
-    client.join(conversation._id);
+    client.conversationId = conversation.id;
+    client.join(conversation.id);
   }
 
   @SubscribeMessage(AppEvents.ConversationLeave)
