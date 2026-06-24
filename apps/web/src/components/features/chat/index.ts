@@ -1,6 +1,6 @@
 import Chat from "./Chat";
 import ChatHeader from "./ChatHeader";
-import ChatMessage from "./ChatMessage";
+import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 
-export { Chat, ChatInput, ChatHeader, ChatMessage };
+export { Chat, ChatInput, ChatHeader, ChatMessages };
